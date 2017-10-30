@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_android_version.view.*
 
 /*Here in constructor of MyAndroidAdapter we pass the ArrayList and a listener as we want to call them in our Main Activity*/
@@ -36,7 +37,9 @@ class MyAndroidAdapter(val myAndroidOSList: ArrayList<MyAndroidOS>, val listener
             */
             itemView.tvName.text = myAndroidOS.name  /*Like here we directly use tvName without using findViewById */
             itemView.tvVersion.text = myAndroidOS.version
-            itemView.ivIcon.setImageResource(myAndroidOS.imageIcon)
+            Glide.with(context).load("https:"+myAndroidOS.imageIcon).into(itemView.ivIcon);
+
+            //itemView.ivIcon.setImageResource(myAndroidOS.imageIcon)
             itemView.setOnClickListener { listener(myAndroidOS) }
         }
     }

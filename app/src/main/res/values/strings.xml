@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">weaterM</string>
     <string name="search">search</string>
+    <string name="findyoucity">findYouCity</string>
 </resources>

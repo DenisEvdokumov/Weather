@@ -42,4 +42,9 @@ dependencies {
     // rxandroid
     compile "io.reactivex.rxjava2:rxandroid:2.0.1"
 
+//
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+
 }

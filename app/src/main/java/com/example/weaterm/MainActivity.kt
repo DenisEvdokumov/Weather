@@ -10,12 +10,30 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
+
+
 
 class MainActivity : AppCompatActivity() {
+    var alMyAndroidOS = ArrayList<MyAndroidOS>()
+    var weater = ""
+    val KEY = "2c1f6498eead4bab9e800226173010"
+    val weatherApiServe by lazy {
+        WeatherApiService.create()
+    }
+
+    var disposable: Disposable? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
     }
 
@@ -26,38 +44,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        var recyclerView = findViewById (R.id.rvAndroidVersions) as RecyclerView
+        if(edit_city.text.toString().isNotEmpty()) {
 
-        recyclerView.setHasFixedSize(true)
+                beginSearch(edit_city.text.toString())
 
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        recyclerView.addItemDecoration(LinearLayoutSpaceItemDecoration(16))
 
-        //Here we create an arraylist to store alMyAndroidOS using the data class MyAndroidOS
-        var alMyAndroidOS = ArrayList<MyAndroidOS>()
 
-        //Adding some data to the arraylist
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcake", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcakce", "vc1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupxcake", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcxake", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcacke", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcakxe", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcakxe", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcazkxe", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcaxcke", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcaxczke", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcakxzce", "v1.5"))
-        alMyAndroidOS.add(MyAndroidOS(R.drawable.ic_launcher,"Cupcakzxce", "v1.5"))
+            var recyclerView = findViewById(R.id.rvAndroidVersions) as RecyclerView
 
-        recyclerView.adapter = MyAndroidAdapter(alMyAndroidOS){}
+            recyclerView.setHasFixedSize(true)
 
-        fun OnClickListener( view: MyAndroidOS){
-            alMyAndroidOS.add(view)
-            recyclerView.adapter = MyAndroidAdapter(alMyAndroidOS){}
-        }
+            recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+            //recyclerView.addItemDecoration(LinearLayoutSpaceItemDecoration(16))
+
+
+            recyclerView.adapter = MyAndroidAdapter(alMyAndroidOS) {}}
+
+
         return super.onOptionsItemSelected(item)
     }
+
+    private fun beginSearch(searchCity:String){
+        disposable =
+                weatherApiServe.hitCountCheck(KEY,searchCity)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                { result -> run  {
+                                    alMyAndroidOS.add(MyAndroidOS(("${result.current.condition.icon}").toString(),("${result.current.temp_c}").toString(), "v1.5"))
+
+
+                                } },
+                                { error -> Toast.makeText(this, error.message, Toast.LENGTH_SHORT).show() }
+        )
+
+    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        disposable?.dispose()
+//    }
 
 }
 
